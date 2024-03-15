@@ -1,7 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from tkinter import filedialog
-from tkinter import ttk as tkk
+# from tkinter import ttk as tkk
 import os
 import shutil
 from moviepy import editor
@@ -130,7 +130,7 @@ audio_field = ttk.Entry(main_frame, textvariable=audio_field_text)
 images_field = ttk.Entry(main_frame, textvariable=images_field_text)
 audio_field_label = ttk.Label(main_frame, text='Select Audio File')
 images_field_label = ttk.Label(main_frame, text='Select Image Files')
-audio_select_button = ttk.Button(main_frame, text='...', command=select_audio)
+audio_select_button = ttk.Button(main_frame, text='...',  command=select_audio)
 images_select_button = ttk.Button(main_frame, text='...', command=select_images)
 convert_button = ttk.Button(main_frame, text='Convert And Save', width=20)
 progress_var = tk.DoubleVar()

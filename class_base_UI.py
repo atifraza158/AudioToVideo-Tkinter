@@ -68,7 +68,18 @@ class MainMenu(ctk.CTkFrame):
         convert_button = ctk.CTkButton(self, text='Convert And Save', width=20, fg_color="#EADFB4", height=50, text_color="black", hover_color="#EABBB4", font=("uber move", 18, 'bold'), command=lambda: self.convert_audio_to_video(progress_var))
         progress_var = tk.DoubleVar()
         status_label = ctk.CTkLabel(self, text="", text_color='black', font=("uber move", 14), corner_radius=20, padx = 10)
-        # progress_bar = ttk.Progressbar(main_frame, orient="horizontal", length=300, mode="determinate", variable=progress_var)
+        
+        # Instructions Widgets
+        # Instructions Frame
+        instructions_frame = ctk.CTkFrame(self)
+        step_1 = ctk.CTkLabel(instructions_frame, text="Step 1:", font=("uber move", 21, 'bold'))
+        step_2 = ctk.CTkLabel(instructions_frame, text="Step 2:", font=("uber move", 21, 'bold'))
+        step_3 = ctk.CTkLabel(instructions_frame, text="Step 3:", font=("uber move", 21, 'bold'))
+
+        instructions_frame2 = ctk.CTkFrame(self)
+        instruction_1 = ctk.CTkLabel(instructions_frame2, text="Select One Audio and One or More Image Files", font=("uber move", 14), anchor='nw')
+        instruction_2 = ctk.CTkLabel(instructions_frame2, text="Click on the Convert and Download ", font=("uber move", 14), anchor='nw')
+        instruction_3 = ctk.CTkLabel(instructions_frame2, text="Dialog Appears Just Select the Output Path", font=("uber move", 14), anchor='nw')
 
 
         # Layout
@@ -78,13 +89,19 @@ class MainMenu(ctk.CTkFrame):
         images_field.grid(row=2, column=1, sticky='we', ipady = 15)
         audio_select_button.grid(row=1, column=2, sticky='w', ipady = 15)
         images_select_button.grid(row=2, column=2, sticky='w', ipady = 15)
-        convert_button.grid(row=3, column=1, columnspan = 2, sticky='e', padx = 50)
-        # progress_bar.grid(row=5, column=1, sticky='ew')
-        # status_label.grid(row=5, column=0, sticky='nsew')
+        convert_button.grid(row=3, column=1, columnspan = 2, sticky='e', padx = 40)
+        instructions_frame.grid(row = 5, column = 0, ipady = 10, rowspan = 2, sticky = 'nsew',)
+        instructions_frame2.grid(row = 5, column = 1, sticky = 'nsew', rowspan = 2, ipady = 10,)
         status_label.place(relx=0.01, rely=0.9, anchor='w', relheight=0.1,)
 
-        # Bind Convert Audio button to conversion function
-        # convert_button.config()
+        step_1.pack(expand = True, fill = 'both')
+        instruction_1.pack(expand = True, fill = 'both',)
+        step_2.pack(expand = True, fill = 'both')
+        instruction_2.pack(expand = True, fill = 'both')
+        step_3.pack(expand = True, fill = 'both')
+        instruction_3.pack(expand = True, fill = 'both')
+
+
 
     def select_audio(self):
         global audio_file
