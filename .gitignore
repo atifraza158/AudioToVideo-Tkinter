@@ -2,3 +2,4 @@ venv/
 AudioToVideo.py
 02_approach.py
 03_AudioToVideo_StatusLabel.py
+audio_to_video.py
