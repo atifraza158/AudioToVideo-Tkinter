@@ -41,7 +41,7 @@ def convert_audio_to_video(progress_var):
     global audio_field, images_field
 
     # Update label text to indicate the video creation process has started
-    status_label.config(text="We are Creating Video, Be Patient Don't Close the application")
+    status_label.config(text="We are Creating Video, Be Patient Don't Close the application", background="#FFEECC")
 
     audio = audio_field.get()
     images = images_field.get()
@@ -85,13 +85,13 @@ def convert_audio_to_video(progress_var):
                     video_clip.write_videofile(output_file, codec="libx264", fps=24, logger=logger)
                     print("Video successfully created.")
                     # Update label text to indicate the video creation process has completed successfully
-                    status_label.config(text="Video is Created Successfully")
+                    status_label.config(text="Video is Created Successfully", background="lightgreen")
                 except Exception as e:
                     print("An error occurred:", e)
                 finally:
                     shutil.rmtree(temp_dir)
                     # Reset the label text after completion or in case of an error
-                    status_label.config(text="Video successfully created.")
+                    status_label.config(text="Video is Created Successfully", background="lightgreen")
 
             # Update progress variable
             progress_var.set(100)
@@ -103,7 +103,7 @@ def convert_audio_to_video(progress_var):
 window = ttk.Window(themename='solar')
 window.title("Audio to Video Converter")
 window.geometry('1100x700')
-window.minsize(900, 600)
+window.minsize(1000, 600)
 window.configure(bg='#C2DEDC')
 
 # Title
@@ -134,7 +134,7 @@ audio_select_button = ttk.Button(main_frame, text='...', command=select_audio)
 images_select_button = ttk.Button(main_frame, text='...', command=select_images)
 convert_button = ttk.Button(main_frame, text='Convert And Save', width=20)
 progress_var = tk.DoubleVar()
-status_label = ttk.Label(main_frame, text="hello, Convert Audio into Video Easily", background='#C2DEDC', foreground='#002b36')
+status_label = ttk.Label(main_frame, text="", background='#C2DEDC', foreground='#002b36', font=("uber move", 13))
 # progress_bar = ttk.Progressbar(main_frame, orient="horizontal", length=300, mode="determinate", variable=progress_var)
 # Label for status
 
@@ -148,7 +148,7 @@ images_select_button.grid(row=2, column=2, sticky='w')
 convert_button.grid(row=4, column=1, sticky='e')
 # progress_bar.grid(row=5, column=1, sticky='ew')
 # status_label.grid(row=5, column=0, sticky='nsew')
-status_label.place(relx=0.01, rely=0.95, anchor='w',)
+status_label.place(relx=0.01, rely=0.9, anchor='w', relheight=0.1)
 
 # Bind Convert Audio button to conversion function
 convert_button.config(command=lambda: convert_audio_to_video(progress_var))
