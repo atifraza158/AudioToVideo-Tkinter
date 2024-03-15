@@ -8,6 +8,8 @@ from moviepy import editor
 from threading import Thread
 from tkinter.messagebox import showinfo
 from proglog import ProgressBarLogger
+from PIL import Image
+
 
 class MyBarLogger(ProgressBarLogger):
     def callback(self, **changes):
@@ -18,7 +20,7 @@ class MyBarLogger(ProgressBarLogger):
         percentage = (value / self.bars[bar]['total']) * 100
         print(bar, attr, percentage)
         # Update progress bar value on the GUI
-        progress_bar['value'] = percentage
+        # progress_bar['value'] = percentage
 
 def select_audio():
     global audio_file
@@ -37,18 +39,34 @@ def select_images():
 
 def convert_audio_to_video(progress_var):
     global audio_field, images_field
+
+    # Update label text to indicate the video creation process has started
+    status_label.config(text="We are Creating Video, Be Patient Don't Close the application")
+
     audio = audio_field.get()
     images = images_field.get()
 
     if audio == '' or images == '':
         showinfo("Insertion Error", "Fill all the fields")
+        # Reset the label text if there is an error
+        # status_label.config(text="")
     else:
-        def _convert(progress_var, progress_bar):
+        def _convert():
+            # Access progress_var from the outer function's scope
+            nonlocal progress_var
+            progress_var = progress_var  # This line may not be necessary, but ensures proper scoping
             temp_dir = "temp_images"
             os.makedirs(temp_dir, exist_ok=True)
             images = images_field.get().split("\n")
             for i, img_path in enumerate(images):
                 shutil.copy(img_path, os.path.join(temp_dir, f"image_{i}.png"))
+
+            # Resize and convert images to RGB format
+            for img_path in images:
+                img = Image.open(img_path)
+                img = img.resize((1280, 720))
+                img = img.convert("RGB")
+                img.save(img_path)
 
             audio_clip = editor.AudioFileClip(audio_file)
             image_files = sorted(os.listdir(temp_dir))
@@ -66,15 +84,19 @@ def convert_audio_to_video(progress_var):
                     logger = MyBarLogger()
                     video_clip.write_videofile(output_file, codec="libx264", fps=24, logger=logger)
                     print("Video successfully created.")
+                    # Update label text to indicate the video creation process has completed successfully
+                    status_label.config(text="Video is Created Successfully")
                 except Exception as e:
                     print("An error occurred:", e)
-
-            shutil.rmtree(temp_dir)
+                finally:
+                    shutil.rmtree(temp_dir)
+                    # Reset the label text after completion or in case of an error
+                    status_label.config(text="Video successfully created.")
 
             # Update progress variable
             progress_var.set(100)
 
-        thread = Thread(target=_convert, args=(progress_var, progress_bar))
+        thread = Thread(target=_convert)
         thread.start()
 
 # Main window
@@ -112,7 +134,9 @@ audio_select_button = ttk.Button(main_frame, text='...', command=select_audio)
 images_select_button = ttk.Button(main_frame, text='...', command=select_images)
 convert_button = ttk.Button(main_frame, text='Convert And Save', width=20)
 progress_var = tk.DoubleVar()
-progress_bar = ttk.Progressbar(main_frame, orient="horizontal", length=300, mode="determinate", variable=progress_var)
+status_label = ttk.Label(main_frame, text="hello, Convert Audio into Video Easily", background='#C2DEDC', foreground='#002b36')
+# progress_bar = ttk.Progressbar(main_frame, orient="horizontal", length=300, mode="determinate", variable=progress_var)
+# Label for status
 
 # Layout
 audio_field_label.grid(row=1, column=0, sticky='we', padx=50)
@@ -122,7 +146,9 @@ images_field.grid(row=2, column=1, sticky='we')
 audio_select_button.grid(row=1, column=2, sticky='w')
 images_select_button.grid(row=2, column=2, sticky='w')
 convert_button.grid(row=4, column=1, sticky='e')
-progress_bar.grid(row=5, column=1, sticky='ew')
+# progress_bar.grid(row=5, column=1, sticky='ew')
+# status_label.grid(row=5, column=0, sticky='nsew')
+status_label.place(relx=0.01, rely=0.95, anchor='w',)
 
 # Bind Convert Audio button to conversion function
 convert_button.config(command=lambda: convert_audio_to_video(progress_var))
