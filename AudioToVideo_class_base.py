@@ -71,12 +71,12 @@ class MainMenu(ctk.CTkFrame):
         
         # Instructions Widgets
         # Instructions Frame
-        instructions_frame = ctk.CTkFrame(self)
+        instructions_frame = ctk.CTkFrame(self, fg_color='transparent')
         step_1 = ctk.CTkLabel(instructions_frame, text="Step 1:", font=("uber move", 21, 'bold'))
         step_2 = ctk.CTkLabel(instructions_frame, text="Step 2:", font=("uber move", 21, 'bold'))
         step_3 = ctk.CTkLabel(instructions_frame, text="Step 3:", font=("uber move", 21, 'bold'))
 
-        instructions_frame2 = ctk.CTkFrame(self)
+        instructions_frame2 = ctk.CTkFrame(self, fg_color='transparent')
         instruction_1 = ctk.CTkLabel(instructions_frame2, text="Select One Audio and One or More Image Files", font=("uber move", 14), anchor='nw')
         instruction_2 = ctk.CTkLabel(instructions_frame2, text="Click on the Convert and Download ", font=("uber move", 14), anchor='nw')
         instruction_3 = ctk.CTkLabel(instructions_frame2, text="Dialog Appears Just Select the Output Path", font=("uber move", 14), anchor='nw')
@@ -90,8 +90,8 @@ class MainMenu(ctk.CTkFrame):
         audio_select_button.grid(row=1, column=2, sticky='w', ipady = 15)
         images_select_button.grid(row=2, column=2, sticky='w', ipady = 15)
         convert_button.grid(row=3, column=1, columnspan = 2, sticky='e', padx = 40)
-        instructions_frame.grid(row = 5, column = 0, ipady = 10, rowspan = 2, sticky = 'nsew',)
-        instructions_frame2.grid(row = 5, column = 1, sticky = 'nsew', rowspan = 2, ipady = 10,)
+        instructions_frame.grid(row = 5, column = 0, ipady = 10, rowspan = 2, sticky = 'nsew')
+        instructions_frame2.grid(row = 5, column = 1, sticky = 'nsew', rowspan = 2)
         status_label.place(relx=0.01, rely=0.9, anchor='w', relheight=0.1,)
 
         step_1.pack(expand = True, fill = 'both')
@@ -155,13 +155,15 @@ class MainMenu(ctk.CTkFrame):
                     video_clip = editor.concatenate_videoclips(image_clips, method="compose")
                     video_clip = video_clip.set_audio(audio_clip)
 
-                    output_file = filedialog.asksaveasfilename(initialdir=".", title="Save Video As", filetypes=(("MP4 files", "*.mp4"), ("All files", "*.*")))
+                    output_file = filedialog.asksaveasfilename(initialdir=".", initialfile="video", title="Save Video As", filetypes=(("MP4 files", "*.mp4"), ("All files", "*.*")))
                     if output_file and not output_file.endswith(".mp4"):
                         output_file += ".mp4"
 
                     if output_file:
                         try:
                             logger = MyBarLogger()
+                            # Update label text to indicate the video creation process has started
+                            status_label.configure(text="We are Creating Video, Be Patient Don't Close the application", bg_color="#FFEECC")
                             video_clip.write_videofile(output_file, codec="libx264", fps=24, logger=logger)
                             print("Video successfully created.")
                             # Update label text to indicate the video creation process has completed successfully

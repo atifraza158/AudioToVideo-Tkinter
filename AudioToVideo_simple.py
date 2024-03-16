@@ -40,9 +40,6 @@ def select_images():
 def convert_audio_to_video(progress_var):
     global audio_field, images_field
 
-    # Update label text to indicate the video creation process has started
-    status_label.config(text="We are Creating Video, Be Patient Don't Close the application", background="#FFEECC")
-
     audio = audio_field.get()
     images = images_field.get()
 
@@ -75,13 +72,15 @@ def convert_audio_to_video(progress_var):
             video_clip = editor.concatenate_videoclips(image_clips, method="compose")
             video_clip = video_clip.set_audio(audio_clip)
 
-            output_file = filedialog.asksaveasfilename(initialdir=".", title="Save Video As", filetypes=(("MP4 files", "*.mp4"), ("All files", "*.*")))
+            output_file = filedialog.asksaveasfilename(initialdir=".", initialfile="video", title="Save Video As", filetypes=(("MP4 files", "*.mp4"), ("All files", "*.*")))
             if output_file and not output_file.endswith(".mp4"):
                 output_file += ".mp4"
 
             if output_file:
                 try:
                     logger = MyBarLogger()
+                    # Update label text to indicate the video creation process has started
+                    status_label.config(text="We are Creating Video, Be Patient Don't Close the application", background="#FFEECC")
                     video_clip.write_videofile(output_file, codec="libx264", fps=24, logger=logger)
                     print("Video successfully created.")
                     # Update label text to indicate the video creation process has completed successfully
