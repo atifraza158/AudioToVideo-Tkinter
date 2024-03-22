@@ -45,29 +45,25 @@ def convert_audio_to_video(progress_var):
 
     if audio == '' or images == '':
         showinfo("Insertion Error", "Fill all the fields")
-        # Reset the label text if there is an error
-        # status_label.config(text="")
     else:
         def _convert():
-            # Access progress_var from the outer function's scope
             nonlocal progress_var
-            progress_var = progress_var  # This line may not be necessary, but ensures proper scoping
+            progress_var = progress_var  
             temp_dir = "temp_images"
             os.makedirs(temp_dir, exist_ok=True)
-            images = images_field.get().split("\n")
-            for i, img_path in enumerate(images):
-                shutil.copy(img_path, os.path.join(temp_dir, f"image_{i}.png"))
 
-            # Resize and convert images to RGB format
-            for img_path in images:
+            images = images_field.get().split("\n")
+            duration_per_image = editor.AudioFileClip(audio).duration / len(images)
+
+            for i, img_path in enumerate(images):
                 img = Image.open(img_path)
                 img = img.resize((1280, 720))
                 img = img.convert("RGB")
-                img.save(img_path)
+                img.save(os.path.join(temp_dir, f"image_{i}.png"))
 
-            audio_clip = editor.AudioFileClip(audio_file)
+            audio_clip = editor.AudioFileClip(audio)
             image_files = sorted(os.listdir(temp_dir))
-            image_clips = [editor.ImageClip(os.path.join(temp_dir, img)).set_duration(audio_clip.duration) for img in image_files]
+            image_clips = [editor.ImageClip(os.path.join(temp_dir, img)).set_duration(duration_per_image) for img in image_files]
 
             video_clip = editor.concatenate_videoclips(image_clips, method="compose")
             video_clip = video_clip.set_audio(audio_clip)
@@ -79,23 +75,19 @@ def convert_audio_to_video(progress_var):
             if output_file:
                 try:
                     logger = MyBarLogger()
-                    # Update label text to indicate the video creation process has started
                     status_label.config(text="We are Creating Video, Be Patient Don't Close the application", background="#FFEECC")
                     video_clip.write_videofile(output_file, codec="libx264", fps=24, logger=logger)
                     print("Video successfully created.")
-                    # Update label text to indicate the video creation process has completed successfully
                     status_label.config(text="Video is Created Successfully", background="lightgreen")
                 except Exception as e:
                     print("An error occurred:", e)
                 finally:
                     shutil.rmtree(temp_dir)
-                    # Reset the label text after completion or in case of an error
                     status_label.config(text="Video is Created Successfully", background="lightgreen")
 
-            # Update progress variable
             progress_var.set(100)
 
-        thread = Thread(target=_convert)
+        thread = Thread(target=_convert, daemon=True)
         thread.start()
 
 # Main window
